@@ -74,20 +74,21 @@ then
 fi
 
 #pass begDate and endDate
-exec python3 create_report.py "$begDate" "$endDate"
+#exec python3 create_report.py "$begDate" "$endDate"
 
 HOST="137.190.19.85"
 #Check exit code
 #Send email
 if [[ $? -eq 0 ]]
 then
-    `tar -czvf company_trans_$begDate\_$endDate.dat .`
-    `ftp -inv $HOST <<EOF
+    tar -czvf company_trans_$begDate\_$endDate.tar company_trans_$begDate\_$endDate.dat
+    `ftp -np $HOST <<END_SCRIPT
         user $user $passwd
         cd files/
+        binary
         put company_trans_$begDate\_$endDate.dat
         bye
-    EOF`
+    END_SCRIPT`
     `mail -s "Sucessfully transfer file $HOST" $email <<< "Successfully created a
     transaction report from $begDate to $endDate"`
 elif [[ $? -eq -1 ]]

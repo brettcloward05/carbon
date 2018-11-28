@@ -70,4 +70,23 @@ if [[ $have_f -eq 1 && $have_t -eq 1 && $have_e -eq 1 ]]
 then
     echo "Have required info"
 fi
+
+#pass begDate and endDate
+py ./create_report.py
+
+HOST="137.190.19.85"
+#Check exit code
+#Send email
+if [[ $? -eq 0 ]]
+then
+    `tar -czvf company_trans_$begDate__$endDate.dat .`
+    `mail -s "Sucessfully transfer file $HOST" $email <<< "Successfully created a
+    transaction report from $begDate to $endDate"`
+elif [[ $? -eq -1 ]]
+then
+    `mail -s "The create_report program exit with code -1" $email <<< "Bad Input parameters $begDate $endDate"`
+else
+    #for -2 exit code
+    `mail -s "The create_report program exit with code -2" $email <<< "No transactions available from $begDate to $endDate"`
+fi
 exit 0

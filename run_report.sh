@@ -30,6 +30,8 @@ UsageFunction()
 have_f=0
 have_t=0
 have_e=0
+user=""
+passwd=""
 
 #gets the input
 while getopts ":f:t:e:u:p:" opt
@@ -72,14 +74,20 @@ then
 fi
 
 #pass begDate and endDate
-py ./create_report.py
+exec python3 create_report.py "$begDate" "$endDate"
 
 HOST="137.190.19.85"
 #Check exit code
 #Send email
 if [[ $? -eq 0 ]]
 then
-    `tar -czvf company_trans_$begDate__$endDate.dat .`
+    `tar -czvf company_trans_$begDate\_$endDate.dat .`
+    `ftp -inv $HOST <<EOF
+        user $user $passwd
+        cd files/
+        put company_trans_$begDate\_$endDate.dat
+        bye
+    EOF`
     `mail -s "Sucessfully transfer file $HOST" $email <<< "Successfully created a
     transaction report from $begDate to $endDate"`
 elif [[ $? -eq -1 ]]

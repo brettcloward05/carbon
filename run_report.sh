@@ -81,7 +81,7 @@ HOST="137.190.19.85"
 #Send email
 if [[ $? -eq 0 ]]
 then
-    tar -czvf company_trans_$begDate\_$endDate.tar company_trans_$begDate\_$endDate.dat
+    zip company_trans_$begDate\_$endDate.dat .
     `ftp -np $HOST <<END_SCRIPT
         user $user $passwd
         cd files/

@@ -4,6 +4,7 @@ Module Documentation Here
 """
 from __future__ import print_function
 import datetime
+import sqlite3
 
 
 def main(beg_date, end_date):
@@ -24,7 +25,19 @@ def main(beg_date, end_date):
 
     b_date = datetime.datetime.strptime(beg_date+'0000', format_str)
     e_date = datetime.datetime.strptime(end_date+'2359', format_str)
-    print(date)
+    print(b_date)
+    print(e_date)
+    conn = sqlite3.connect('hw8SQLite.db')
+    cur = conn.cursor()
+    cur.execute("""SELECT t.trans_id, t.trans_date, card_num, tl.qty, tl.amt,
+                p.prod_desc
+                FROM products p
+                INNER JOIN trans_line tl on tl.prod_num = p.prod_num
+                INNER JOIN trans t on t.trans_id = tl.trans_id
+                WHERE t.trans_date BETWEEN '2017-03-01' AND '2017-05-01';
+    """)
+    data = cur.fetchall()
+    print(data[0][0])
 
 
 if __name__ == "__main__":

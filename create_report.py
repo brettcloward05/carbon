@@ -29,17 +29,44 @@ def main(beg_date, end_date):
     print(e_date)
     conn = sqlite3.connect('hw8SQLite.db')
     cur = conn.cursor()
-    cur.execute("""SELECT t.trans_id, t.trans_date, card_num, tl.qty, tl.amt,
-                p.prod_desc
-                FROM products p
-                INNER JOIN trans_line tl on tl.prod_num = p.prod_num
-                INNER JOIN trans t on t.trans_id = tl.trans_id
-                WHERE t.trans_date BETWEEN '2017-03-01' AND '2017-05-01';
-    """)
+    # TODO: finish formatting
+    statement = """SELECT
+                    SUBSTR('000000'||REPLACE(PRINTF("%.2f",t.total), '.', ''), -6),
+                    substr('00000'||t.trans_id, -5),
+                    strftime('%Y%m%d%H%M', t.trans_date),
+                    substr(t.card_num, -6),
+                    SUBSTR( '00'||PRINTF("%.0f",b.qty), -2),
+                    SUBSTR('000000'||REPLACE(PRINTF("%.2f",b.amt), '.', ''), -6),
+                    IFNULL(substr(b.prod_desc||'          ', 0, 11), '          ')
+                FROM trans t
+                LEFT JOIN
+                    (SELECT *
+                    FROM trans_line tl
+                    INNER JOIN products p on p.prod_num = tl.prod_num
+                    ) b ON t.trans_id = b.trans_id
+                WHERE t.trans_date BETWEEN '"""+ str(b_date)+ """' AND '""" + str(e_date) + """';"""
+    cur.execute(statement)
     data = cur.fetchall()
-    print(data[0][0])
+    #print(type(data[0]))
+    transactions = list()
+
+    for row in data:
+        if int(row[1]) > len(transactions):
+            transactions.append(list(row))
+        else:
+            transactions[int(row[1])-1].extend([row[4], row[5], row[6]])
+
+    for trans in transactions:
+        while len(trans) < 13:
+            trans.extend(['00', '000000', '          '])
+        trans.append(trans[0])
+        trans.pop(0)
+
+    for stuff in transactions:
+        print(stuff)
+
 
 
 if __name__ == "__main__":
-    main('20181128', '20181130')
+    main('20170401', '20181130')
     exit(0)

@@ -74,7 +74,7 @@ then
 fi
 
 #pass begDate and endDate
-#exec python3 create_report.py "$begDate" "$endDate"
+exec python3 create_report.py "$begDate" "$endDate"
 
 HOST="137.190.19.85"
 #Check exit code

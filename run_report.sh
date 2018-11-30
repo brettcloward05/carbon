@@ -76,13 +76,25 @@ fi
 #pass begDate and endDate
 exec python3 create_report.py "$begDate" "$endDate"
 
+
 HOST="137.190.19.85"
 #Check exit code
 #Send email
-if [[ $? -eq 0 ]]
+if [[ $? -eq -1 ]]
+then
+    echo "Emailing $email"
+    `mail -s "The create_report program exit with code -1" $email <<< "Bad Input parameters $begDate $endDate"`
+    exit 0
+elif [[ $? -eq -2 ]]
+then
+    echo "Emailing $email"
+    `mail -s "The create_report program exit with code -2" $email <<< "No transactions available from $begDate to $endDate"`
+    exit 0
+elif [[ $? -eq 0 ]]
 then
     echo "Zipping file"
-    `tar -czvf company_trans_$begDate\_$endDate.tar company_trans_$begDate\_$endDate.dat`
+    #`zip company_trans_$begDate_$endDate.zip company_trans_$begDate_$endDate.dat`
+    tar -czvf company_trans_$begDate\_$endDate.tar company_trans_$begDate\_$endDate.dat
     echo "Emailing $email"
     `mail -s "Successfully transfer file $HOST" $email <<< "Successfully created a
     transaction report from $begDate to $endDate"`
@@ -91,17 +103,7 @@ then
         user $user $passwd
         cd files/
         binary
-        put company_trans_$begDate\_$endDate.tar
+        put company_trans_$begDate_$endDate.tar
         bye
     EOF
-elif [[ $? -eq -1 ]]
-then
-    echo "Emailing $email"
-    `mail -s "The create_report program exit with code -1" $email <<< "Bad Input parameters $begDate $endDate"`
-    exit 0
-else
-    echo "Emailing $email"
-    #for -2 exit code
-    `mail -s "The create_report program exit with code -2" $email <<< "No transactions available from $begDate to $endDate"`
-    exit 0
 fi

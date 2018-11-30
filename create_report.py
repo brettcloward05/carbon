@@ -88,19 +88,19 @@ def main(beg_date, end_date):
         trans.append(trans[0])
         trans.pop(0)
 
+
     # If we got no data from our query then it will let you know and exit the
     # program with exit code 2
     if not transactions:
         print("No transactions recorded between", b_date, "and", e_date)
         exit(2)
-    if transactions:
-        print(transactions)
 
     # Creates a file and stores each transaction on their own line
     with open('company_trans_%s_%s.dat'%(beg_date, end_date), mode='w+',
               encoding='utf-8') as my_file:
         for trans in transactions:
             my_file.write(''.join(trans)+"\n")
+            print(trans)
 
 
 if __name__ == "__main__":

@@ -82,20 +82,21 @@ HOST="137.190.19.85"
 if [[ $? -eq 0 ]]
 then
     zip company_trans_$begDate\_$endDate.dat .
-    `ftp -np $HOST <<END_SCRIPT
+    `mail -s "Successfully transfer file $HOST" $email <<< "Successfully created a
+    transaction report from $begDate to $endDate"`
+    ftp -np $HOST <<EOF
         user $user $passwd
         cd files/
         binary
-        put company_trans_$begDate\_$endDate.dat
+        put company_trans_$begDate\_$endDate.zip
         bye
-    END_SCRIPT`
-    `mail -s "Sucessfully transfer file $HOST" $email <<< "Successfully created a
-    transaction report from $begDate to $endDate"`
+    EOF
 elif [[ $? -eq -1 ]]
 then
     `mail -s "The create_report program exit with code -1" $email <<< "Bad Input parameters $begDate $endDate"`
+    exit 0
 else
     #for -2 exit code
     `mail -s "The create_report program exit with code -2" $email <<< "No transactions available from $begDate to $endDate"`
+    exit 0
 fi
-exit 0

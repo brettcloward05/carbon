@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Module Documentation Here
+Creates file from database information
 """
 from __future__ import print_function
 import datetime
@@ -17,7 +17,6 @@ def usage_function():
           "format: YYYYMMDD")
     print("param:end_date: the ending date to query for transactions in the "
           "format: YYYYMMDD")
-
 
 
 def main(beg_date, end_date):

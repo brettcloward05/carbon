@@ -82,7 +82,7 @@ HOST="137.190.19.85"
 if [[ $? -eq 0 ]]
 then
     echo "Zipping file"
-    zip company_trans_$begDate\_$endDate.dat
+    `tar -czvf company_trans_$begDate\_$endDate.tar company_trans_$begDate\_$endDate.dat`
     echo "Emailing $email"
     `mail -s "Successfully transfer file $HOST" $email <<< "Successfully created a
     transaction report from $begDate to $endDate"`
@@ -91,7 +91,7 @@ then
         user $user $passwd
         cd files/
         binary
-        put company_trans_$begDate\_$endDate.zip
+        put company_trans_$begDate\_$endDate.tar
         bye
     EOF
 elif [[ $? -eq -1 ]]

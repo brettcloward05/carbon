@@ -93,6 +93,8 @@ def main(beg_date, end_date):
     if not transactions:
         print("No transactions recorded between", b_date, "and", e_date)
         exit(2)
+    if transactions:
+        print(transactions)
 
     # Creates a file and stores each transaction on their own line
     with open('company_trans_%s_%s.dat'%(beg_date, end_date), mode='w+',
